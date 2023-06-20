@@ -90,19 +90,22 @@ class ProductoController extends Producto implements IApiUsable
 
     
     public function ModificarUno($request, $response, $args)
-    {
-        $parametros = $request->getParsedBody();
+{
+    $parametros = $request->getParsedBody();
 
-        $nombre = $parametros['nombre'];
-        Producto::modificarProducto($nombre);
+    $nombre = $parametros['nombre'];
+    $precio = $parametros['precio'];
+    $cantidad = $parametros['cantidad'];
+   
 
-        $payload = json_encode(array("mensaje" => "Producto modificado con exito"));
+    Producto::modificarProducto($nombre, $precio, $cantidad);
 
-        $response->getBody()->write($payload);
-        return $response
-          ->withHeader('Content-Type', 'application/json');
-    }
+    $payload = json_encode(array("mensaje" => "Producto modificado con éxito"));
 
+    $response->getBody()->write($payload);
+    return $response
+      ->withHeader('Content-Type', 'application/json');
+}
     
     public function BorrarUno($request, $response, $args)
     {
