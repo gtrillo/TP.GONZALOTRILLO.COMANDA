@@ -94,7 +94,7 @@ class ProductoController extends Producto implements IApiUsable
         $parametros = $request->getParsedBody();
 
         $nombre = $parametros['nombre'];
-        Producto::ModificarUno($nombre);
+        Producto::modificarProducto($nombre);
 
         $payload = json_encode(array("mensaje" => "Producto modificado con exito"));
 
