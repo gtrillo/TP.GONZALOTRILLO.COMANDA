@@ -1,29 +1,42 @@
 <?php
+require_once 'app/models/Pedido.php';
 require_once 'app/models/Producto.php';
 require_once 'app/interfaces/IApiUsable.php';
 
-class ProductoController extends Producto implements IApiUsable
+class PedidoController extends Pedido implements IApiUsable
 {
     public function CargarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
-
-        $precio = $parametros['precio'];
-        $nombre = $parametros['nombre'];
-        $cantidad = $parametros['cantidad'];
-
-        // Creamos el producto
-        $producto = new Producto();
-        $producto->nombre = $nombre;
-        $producto->cantidad = $cantidad;
-        $producto->precio = $precio;
-        $producto->CrearProducto();
-
-        $payload = json_encode(array("mensaje" => "Producto creado con éxito"));
-
+    
+        $estado = $parametros['estado'];
+        $foto = $parametros['foto'];
+        $codigo = $parametros['codigo'];
+        $tiempoDeResolucion = $parametros['tiempoDeResolucion'];
+        $listaProductosEntrada = $parametros['listaProductos'];
+        $listaProductosFinal = array();
+    
+        foreach ($listaProductosEntrada as $item) {
+            $producto = Producto::obtenerProductoXNombre($item['nombre']);
+            if ($producto == null) {
+                echo "Producto " . $item['nombre'] . " no encontrado";
+            } else {
+                $listaProductosFinal[] = $producto;
+            }
+        }
+    
+        $pedido = new Pedido();
+        $pedido->estado = $estado;
+        $pedido->foto = $foto;
+        $pedido->codigoPedido = $codigo;
+        $pedido->tiempoDeResolucion = $tiempoDeResolucion;
+        $pedido->listaProductos = $listaProductosFinal;
+        $pedido->CrearPedido();
+    
+        $payload = json_encode(array("mensaje" => "Pedido creado con éxito"));
+    
         $response->getBody()->write($payload);
-        return $response
-          ->withHeader('Content-Type', 'application/json');
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     public function TraerUno($request, $response, $args)
@@ -38,32 +51,13 @@ class ProductoController extends Producto implements IApiUsable
     
     public function TraerTodos($request, $response, $args)
     {
-        $lista = Producto::obtenerTodos();
+        $lista = Pedido::obtenerTodos();
         $payload = json_encode(array("listaProducto" => $lista));
     
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
     
-    public function CrearUno($request, $response, $args)
-    {
-        $parametros = $request->getParsedBody();
-    
-        $nombre = $parametros['nombre'];
-        $cantidad = $parametros['cantidad'];
-        $precio = $parametros['precio'];
-    
-        $producto = new Producto();
-        $producto->nombre = $nombre;
-        $producto->cantidad = $cantidad;
-        $producto->precio = $precio;
-        $producto->crearProducto();
-    
-        $payload = json_encode(array("mensaje" => "Producto creado con éxito"));
-    
-        $response->getBody()->write($payload);
-        return $response->withHeader('Content-Type', 'application/json');
-    }
     /*
     public function ModificarUno($request, $response, $args)
     {
@@ -87,8 +81,6 @@ class ProductoController extends Producto implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }*/
 
-
-    
     public function ModificarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();

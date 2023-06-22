@@ -49,8 +49,10 @@ class UsuarioController extends Usuario implements IApiUsable
     public function ModificarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
-
+   
         $nombre = $parametros['nombre'];
+
+
         Usuario::modificarUsuario($nombre);
 
         $payload = json_encode(array("mensaje" => "Producto modificado con exito"));

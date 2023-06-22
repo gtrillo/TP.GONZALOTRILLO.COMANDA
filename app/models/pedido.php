@@ -11,8 +11,9 @@ class Pedido {
 
     public function CrearPedido()
     {
+
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO pedido (id, codigo, estado, tiempoDeResolucion) VALUES (:id, :codigo, :estado, :tiempoDeResolucion)");
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO pedido (id,codigo, estado, tiempoDeResolucion) VALUES (:id,:codigo, :estado, :tiempoDeResolucion)");
         $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
         $consulta->bindValue(':codigo', $this->codigoPedido, PDO::PARAM_STR);
         $consulta->bindValue(':estado', $this->estado, PDO::PARAM_STR);
@@ -21,7 +22,6 @@ class Pedido {
 
         $pedidoId = $objAccesoDatos->obtenerUltimoId();
 
-        // Insertar los productos asociados al pedido en la tabla de relación pedido_producto
         foreach ($this->listaProductos as $producto) {
             $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO detalle_pedido (pedido_id, producto_id) VALUES (:pedidoId, :productoId)");
             $consulta->bindValue(':pedidoId', $pedidoId, PDO::PARAM_INT);
@@ -36,7 +36,7 @@ class Pedido {
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT p.id, p.codigo, p.estado, p.tiempoDeResolucion, dp.producto_id FROM pedido p LEFT JOIN detalle_pedido dp ON p.id = dp.pedido_id");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT p.id, p.codigo, p.estado, p.tiempoDeResolucion, dp.producto_id, pr.precio, pr.cantidad, pr.nombre FROM pedido p LEFT JOIN detalle_pedido dp ON p.id = dp.pedido_id LEFT JOIN producto pr ON dp.producto_id = pr.id");
         $consulta->execute();
 
         $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -56,6 +56,8 @@ class Pedido {
             if ($fila['producto_id']) {
                 $producto = new Producto();
                 $producto->id = $fila['producto_id'];
+                $producto->nombre = $fila['nombre'];
+                $producto->precio = $fila['precio'];
                 $pedidos[$pedido->id]->listaProductos[] = $producto;
             }
         }

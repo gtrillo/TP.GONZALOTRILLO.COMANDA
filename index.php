@@ -11,6 +11,7 @@ use Slim\Routing\RouteCollectorProxy;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
 require_once 'app/controller/UsuarioController.php';
+require_once 'app/controller/PedidoController.php';
 require_once 'app/controller/ProductoController.php';
 
 require __DIR__ . '/vendor/autoload.php';
@@ -59,9 +60,17 @@ $app->group('/usuarios', function (RouteCollectorProxy $group) {
   $app->group('/producto', function (RouteCollectorProxy $group){
     $group->post('[/]', \ProductoController::class . ':CargarUno');
     $group->get('[/]', \ProductoController::class . ':TraerTodos');
-    $group->get('/{usuario}', \ProductoController::class . ':TraerUno');
-    $group->put('/{id}', \ProductoController::class . ':ModificarUno');
-  });
+    $group->get('/{id}', \ProductoController::class . ':TraerUno');
+    $group->put('/modificar/{id}', \ProductoController::class . ':ModificarUno');
+});
+
+
+$app->group('/pedido', function (RouteCollectorProxy $group){
+    $group->post('[/]', \PedidoController::class . ':CargarUno');
+    $group->get('[/]', \PedidoController::class . ':TraerTodos');
+    $group->get('/{id}', \PedidoController::class . ':TraerUno');
+    $group->put('/modificar/{id}', \PedidoController::class . ':ModificarUno');
+});
 
 
 

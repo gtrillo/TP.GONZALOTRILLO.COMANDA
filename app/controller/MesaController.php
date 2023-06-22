@@ -12,7 +12,7 @@ class MesaController extends Usuario //implements IApiUsable
         $clave = $parametros['clave'];
         $rol = $parametros['rol'];
 
-        // Creamos el usuario
+
         $usr = new Usuario();
         $usr->usuario = $usuario;
         $usr->clave = $clave;
@@ -28,7 +28,6 @@ class MesaController extends Usuario //implements IApiUsable
 
     public function TraerUno($request, $response, $args)
     {
-        // Buscamos usuario por nombre
         $codigo = $args['codigo'];
         $mesa = Mesa::obtenerMesa($codigo);
         $payload = json_encode($usuario);
@@ -51,15 +50,20 @@ class MesaController extends Usuario //implements IApiUsable
     {
         $parametros = $request->getParsedBody();
 
-        $codigo = $parametros['codigo'];
-        Mesa::modificarUsuario($codigo);
+        $nombre = $parametros['nombre'];
+        $precio = $parametros['precio'];
+        $cantidad = $parametros['cantidad'];
+        $id = $parametros['id'];
 
-        $payload = json_encode(array("mensaje" => " Mesa modificado con exito"));
+        Mesa::modificarMesa($nombre, $precio, $cantidad,$id);
+
+        $payload = json_encode(array("mensaje" => "Producto modificado con éxito"));
 
         $response->getBody()->write($payload);
         return $response
-          ->withHeader('Content-Type', 'application/json');
+        ->withHeader('Content-Type', 'application/json');
     }
+    
 
     public function BorrarUno($request, $response, $args)
     {
