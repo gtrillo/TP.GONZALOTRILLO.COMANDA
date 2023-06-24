@@ -41,10 +41,9 @@ class PedidoController extends Pedido implements IApiUsable
 
     public function TraerUno($request, $response, $args)
     {
-        $productoId = $args['id'];
-        $producto = Producto::obtenerProductoXId($productoId);
-        $payload = json_encode($producto);
-    
+        $codigoPedido = $args['codigoPedido'];
+        $pedido = Pedido::obtenerPedido($codigoPedido);
+        $payload = json_encode($pedido);
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
@@ -58,29 +57,6 @@ class PedidoController extends Pedido implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }
     
-    /*
-    public function ModificarUno($request, $response, $args)
-    {
-        $parametros = $request->getParsedBody();
-    
-        $productoId = $args['id'];
-        $nombre = $parametros['nombre'];
-        $cantidad = $parametros['cantidad'];
-        $precio = $parametros['precio'];
-    
-        $producto = new Producto();
-        $producto->id = $productoId;
-        $producto->nombre = $nombre;
-        $producto->cantidad = $cantidad;
-        $producto->precio = $precio;
-        $producto->actualizarProducto();
-    
-        $payload = json_encode(array("mensaje" => "Producto actualizado con éxito"));
-    
-        $response->getBody()->write($payload);
-        return $response->withHeader('Content-Type', 'application/json');
-    }*/
-
     public function ModificarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();

@@ -13,6 +13,7 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 require_once 'app/controller/UsuarioController.php';
 require_once 'app/controller/PedidoController.php';
 require_once 'app/controller/ProductoController.php';
+require_once 'app/controller/MesaController.php';
 
 require __DIR__ . '/vendor/autoload.php';
 // Instantiate App
@@ -64,12 +65,20 @@ $app->group('/usuarios', function (RouteCollectorProxy $group) {
     $group->put('/modificar/{id}', \ProductoController::class . ':ModificarUno');
 });
 
-
 $app->group('/pedido', function (RouteCollectorProxy $group){
     $group->post('[/]', \PedidoController::class . ':CargarUno');
     $group->get('[/]', \PedidoController::class . ':TraerTodos');
-    $group->get('/{id}', \PedidoController::class . ':TraerUno');
+    $group->get('/{codigo}', \PedidoController::class . ':TraerUno');
     $group->put('/modificar/{id}', \PedidoController::class . ':ModificarUno');
+});
+
+
+
+$app->group('/mesa', function (RouteCollectorProxy $group){
+    $group->post('[/]', \MesaController::class . ':CargarUno');
+    $group->get('[/]', \MesaController::class . ':TraerTodos');
+    $group->get('/{codigo}', \MesaController::class . ':TraerUno');
+    $group->put('/modificar/{id}', \MesaController::class . ':ModificarUno');
 });
 
 

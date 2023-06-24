@@ -21,7 +21,6 @@ class Pedido {
         $consulta->execute();
 
         $pedidoId = $objAccesoDatos->obtenerUltimoId();
-
         foreach ($this->listaProductos as $producto) {
             $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO detalle_pedido (pedido_id, producto_id) VALUES (:pedidoId, :productoId)");
             $consulta->bindValue(':pedidoId', $pedidoId, PDO::PARAM_INT);
@@ -70,30 +69,34 @@ class Pedido {
     public static function obtenerPedido($codigo)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT p.id, p.codigo, p.estado, p.tiempoDeResolucion, dp.producto_id FROM pedido p LEFT JOIN detalle_pedido dp ON p.id = dp.pedido_id WHERE p.codigo = :codigo");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT p.id, p.codigo, p.estado, p.tiempoDeResolucion, dp.producto_id, pr.precio, pr.cantidad, pr.nombre FROM pedido p LEFT JOIN detalle_pedido dp ON p.id = dp.pedido_id LEFT JOIN producto pr ON dp.producto_id = pr.id WHERE p.codigo = :codigo");
         $consulta->bindValue(':codigo', $codigo, PDO::PARAM_STR);
         $consulta->execute();
 
         $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
 
-        $pedido = null;
+        $pedidos = [];
         foreach ($resultados as $fila) {
-            if (!$pedido) {
-                $pedido = new Pedido();
-                $pedido->id = $fila['id'];
-                $pedido->codigoPedido = $fila['codigo'];
-                $pedido->estado = $fila['estado'];
-                $pedido->tiempoDeResolucion = $fila['tiempoDeResolucion'];
+            $pedido = new Pedido();
+            $pedido->id = $fila['id'];
+            $pedido->codigoPedido = $fila['codigo'];
+            $pedido->estado = $fila['estado'];
+            $pedido->tiempoDeResolucion = $fila['tiempoDeResolucion'];
+
+            if (!isset($pedidos[$pedido->id])) {
+                $pedidos[$pedido->id] = $pedido;
             }
 
             if ($fila['producto_id']) {
                 $producto = new Producto();
                 $producto->id = $fila['producto_id'];
-                $pedido->listaProductos[] = $producto;
+                $producto->nombre = $fila['nombre'];
+                $producto->precio = $fila['precio'];
+                $pedidos[$pedido->id]->listaProductos[] = $producto;
             }
         }
 
-        return $pedido;
+        return array_values($pedidos);
     }
 
     public static function modificarPedido($id, $codigo, $estado, $tiempoDeResolucion)

@@ -2,30 +2,31 @@
 require_once 'app/models/mesa.php';
 require_once 'app/interfaces/IApiUsable.php';
 
-class MesaController extends Usuario //implements IApiUsable
-{
+class MesaController extends Mesa implements IApiUsable
+  {
     public function CargarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
-
-        $usuario = $parametros['usuario'];
-        $clave = $parametros['clave'];
-        $rol = $parametros['rol'];
-
-
-        $usr = new Usuario();
-        $usr->usuario = $usuario;
-        $usr->clave = $clave;
-        $usr->rol = $rol;
-        $usr->crearUsuario();
-
+    
+        $estado = $parametros['estado'];
+        $foto = $parametros['foto'];
+        $codigoPedido = $parametros['codigoPedido'];
+        $codigoMesa = $parametros['codigoMesa'];
+    
+        $mesa = new Mesa();
+        $mesa->estado = $estado;
+        $mesa->foto = $foto;
+        $mesa->codigoPedido = $codigoPedido;
+        $mesa->codigoMesa = $codigoMesa;
+        $mesa->CrearMesa();
+    
         $payload = json_encode(array("mensaje" => "Mesa creada con exito"));
-
+    
         $response->getBody()->write($payload);
         return $response
-          ->withHeader('Content-Type', 'application/json');
+            ->withHeader('Content-Type', 'application/json');
     }
-
+  
     public function TraerUno($request, $response, $args)
     {
         $codigo = $args['codigo'];

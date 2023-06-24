@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"usuario\": \"johndoe\",\r\n  \"contrasena\": \"mipassword\",\r\n  \"rol\": \"admin\"\r\n}",
+					"raw": "{\r\n  \"usuario\": \"johndoe\",\r\n  \"clave\": \"mipassword\",\r\n  \"rol\": \"admin\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -41,7 +41,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"nombre\": \"45645\",\r\n  \r\n}",
+					"raw": "{\r\n  \"nombre\": \"milanesa\"\r\n  \"precio\": 1231,\r\n  \"cantidad\": 10\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -109,6 +109,104 @@
 		},
 		{
 			"name": "New Request",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "usuario",
+						"value": "pedro",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"usuario\": \"carlos\",\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:666/usuarios?usuario=franco",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "666",
+					"path": [
+						"usuarios"
+					],
+					"query": [
+						{
+							"key": "usuario",
+							"value": "franco"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ModificarProducto",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"nuevo producto\",\r\n  \"cantidad\": 10,\r\n  \"precio\": 29.99\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:666/producto/modificar/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "666",
+					"path": [
+						"producto",
+						"modificar",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CargarPedido",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"estado\": \"en preparacion\",\r\n  \"foto\": \"valor_foto\",\r\n  \"codigo\": \"adw1385\",\r\n  \"tiempoDeResolucion\": \"adw1385\",\r\n  \"listaProductos\": [\r\n    {\r\n      \"nombre\": \"cocacola\",\r\n      \"cantidad\": 1,\r\n      \"precio\": 2.5\r\n    },\r\n    {\r\n      \"nombre\": \"milanesa con pure\",\r\n      \"cantidad\": 1,\r\n      \"precio\": 12.99\r\n    }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:666/pedido/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "666",
+					"path": [
+						"pedido",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PedidoTraerTodos",
 			"request": {
 				"method": "GET",
 				"header": []
