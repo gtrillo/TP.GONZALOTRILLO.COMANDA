@@ -10,13 +10,11 @@ class MesaController extends Mesa implements IApiUsable
     
         $estado = $parametros['estado'];
         $foto = $parametros['foto'];
-        $codigoPedido = $parametros['codigoPedido'];
         $codigoMesa = $parametros['codigoMesa'];
-    
+
         $mesa = new Mesa();
         $mesa->estado = $estado;
         $mesa->foto = $foto;
-        $mesa->codigoPedido = $codigoPedido;
         $mesa->codigoMesa = $codigoMesa;
         $mesa->CrearMesa();
     
@@ -31,7 +29,7 @@ class MesaController extends Mesa implements IApiUsable
     {
         $codigo = $args['codigo'];
         $mesa = Mesa::obtenerMesa($codigo);
-        $payload = json_encode($usuario);
+        $payload = json_encode($mesa);
 
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');

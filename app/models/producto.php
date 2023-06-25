@@ -5,34 +5,55 @@ class Producto {
     public $nombre;
     public $precio;
     public $cantidad;
+    public $sector;
+
 
     public function CrearProducto()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO producto (id, nombre, precio, cantidad) VALUES (:id, :nombre, :precio, :cantidad)");
-        $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
-        $consulta->bindValue(':nombre', $this->nombre, PDO::PARAM_STR);
-        $consulta->bindValue(':precio', $this->precio, PDO::PARAM_STR);
-        $consulta->bindValue(':cantidad', $this->cantidad, PDO::PARAM_INT);
-        $consulta->execute();
-
-        return $objAccesoDatos->obtenerUltimoId();
+        
+        $consultaExiste = $objAccesoDatos->prepararConsulta("SELECT COUNT(*) FROM sector WHERE nombre = :nombre");
+        $consultaExiste->bindValue(':nombre', $this->sector, PDO::PARAM_STR);
+        $consultaExiste->execute();
+        
+        $sectorExiste = $consultaExiste->fetchColumn();
+        
+        if ($sectorExiste) {
+            $consultaIdSector = $objAccesoDatos->prepararConsulta("SELECT id FROM sector WHERE nombre = :nombre");
+            $consultaIdSector->bindValue(':nombre', $this->sector, PDO::PARAM_STR);
+            $consultaIdSector->execute();
+            
+            $idSector = $consultaIdSector->fetchColumn();
+            
+            $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO producto (id, nombre, precio, cantidad, sector_id) VALUES (:id, :nombre, :precio, :cantidad, :sector_id)");
+            $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
+            $consulta->bindValue(':nombre', $this->nombre, PDO::PARAM_STR);
+            $consulta->bindValue(':precio', $this->precio, PDO::PARAM_STR);
+            $consulta->bindValue(':cantidad', $this->cantidad, PDO::PARAM_INT);
+            $consulta->bindValue(':sector_id', $idSector, PDO::PARAM_INT);
+        
+            $consulta->execute();
+        
+            return $objAccesoDatos->obtenerUltimoId();
+        } else {
+            throw new Exception("El sector ingresado no es válido.");
+        }
     }
+    
 
 
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, precio, cantidad FROM producto");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, precio, cantidad,sector_id FROM producto");
         $consulta->execute();
-
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Producto');
     }
 
     public static function obtenerProductoXId($id)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, precio, cantidad FROM producto WHERE id = :id");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, precio, cantidad,sector_id FROM producto WHERE id = :id");
         $consulta->bindValue(':id', $id, PDO::PARAM_INT);
         $consulta->execute();
 
@@ -42,7 +63,7 @@ class Producto {
     public static function obtenerProductoXNombre($nombre)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, precio, cantidad FROM producto WHERE nombre = :nombre");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, precio, cantidad,sector_id FROM producto WHERE nombre = :nombre");
         $consulta->bindValue(':nombre', $nombre, PDO::PARAM_INT);
         $consulta->execute();
 

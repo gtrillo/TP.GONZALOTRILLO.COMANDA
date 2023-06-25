@@ -1,6 +1,7 @@
 <?php
 require_once 'app/models/Pedido.php';
 require_once 'app/models/Producto.php';
+require_once 'app/models/Usuario.php';
 require_once 'app/interfaces/IApiUsable.php';
 
 class PedidoController extends Pedido implements IApiUsable
@@ -11,11 +12,12 @@ class PedidoController extends Pedido implements IApiUsable
     
         $estado = $parametros['estado'];
         $foto = $parametros['foto'];
-        $codigo = $parametros['codigo'];
+        $numeroPedido = $parametros['numeroPedido'];
         $tiempoDeResolucion = $parametros['tiempoDeResolucion'];
         $listaProductosEntrada = $parametros['listaProductos'];
+        $codigoMesa = $parametros['codigoMesa'];
         $listaProductosFinal = array();
-    
+
         foreach ($listaProductosEntrada as $item) {
             $producto = Producto::obtenerProductoXNombre($item['nombre']);
             if ($producto == null) {
@@ -24,11 +26,12 @@ class PedidoController extends Pedido implements IApiUsable
                 $listaProductosFinal[] = $producto;
             }
         }
-    
+        
         $pedido = new Pedido();
         $pedido->estado = $estado;
         $pedido->foto = $foto;
-        $pedido->codigoPedido = $codigo;
+        $pedido->codigoMesa = $codigoMesa;
+        $pedido->codigoPedido = $numeroPedido;
         $pedido->tiempoDeResolucion = $tiempoDeResolucion;
         $pedido->listaProductos = $listaProductosFinal;
         $pedido->CrearPedido();

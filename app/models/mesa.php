@@ -1,30 +1,22 @@
 <?php
-require_once 'app/models/pedido.php';
+
 class Mesa {
 
     public $id;
     public $estado;
     public $foto;
     public $codigoMesa;
-    public $pedido;
-    public $codigoPedido;
+
     public function CrearMesa()
     {
-        $pedido = Pedido::obtenerPedido($this->codigoPedido);
-        if($pedido != null){
             $objAccesoDatos = AccesoDatos::obtenerInstancia();
-            $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO mesa (id,codigo ,estado, foto,pedido_id) VALUES (:id,:codigo,:estado,:foto,:pedido_id)");
+            $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO mesa (id,codigo ,estado, foto) VALUES (:id,:codigo,:estado,:foto)");
             $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
             $consulta->bindValue(':foto', $this->foto, PDO::PARAM_STR);
             $consulta->bindValue(':estado', $this->estado, PDO::PARAM_STR);
             $consulta->bindValue(':codigo', $this->codigoMesa, PDO::PARAM_STR);
-            echo($pedido->id);
-            $consulta->bindValue(':pedido_id', $pedido->id, PDO::PARAM_STR);
             $consulta->execute();
-        }else{
-            echo("el codigo de pedido es incorrecto intente nuevamente");
-        }
-
+        
 
         return $objAccesoDatos->obtenerUltimoId();
     }
@@ -40,13 +32,11 @@ class Mesa {
     }
 
 
-
-    
-    public static function obetenerMesa($codigo)
+    public static function obtenerMesa($codigoMesa)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado,codigo, foto FROM mesa WHERE usuario = :usuario");
-        $consulta->bindValue(':codigo', $codigo, PDO::PARAM_STR);
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado,codigo, foto FROM mesa WHERE codigo = :codigo");
+        $consulta->bindValue(':codigo', $codigoMesa, PDO::PARAM_STR);
         $consulta->execute();
 
         return $consulta->fetchObject('Mesa');
