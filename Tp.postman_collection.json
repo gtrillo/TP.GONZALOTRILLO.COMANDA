@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"usuario\": \"johndoe\",\r\n  \"clave\": \"mipassword\",\r\n  \"rol\": \"admin\"\r\n}",
+					"raw": "{\r\n  \"usuario\": \"johndoe\",\r\n  \"clave\": \"mipassword\",\r\n  \"rol\": \"admin\",\r\n  \"alias\": \"jefe\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -21,7 +21,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:666/usuarios",
+					"raw": "http://localhost:666/usuarios?usuario=franco",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -29,6 +29,12 @@
 					"port": "666",
 					"path": [
 						"usuarios"
+					],
+					"query": [
+						{
+							"key": "usuario",
+							"value": "franco"
+						}
 					]
 				}
 			},
@@ -41,7 +47,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"nombre\": \"milanesa\"\r\n  \"precio\": 1231,\r\n  \"cantidad\": 10\r\n}",
+					"raw": "{\r\n  \"nombre\": \"milanesa\",\r\n  \"precio\": 1231,\r\n  \"cantidad\": 10,\r\n  \"sector\": \"cocina\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -49,14 +55,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:666/producto",
+					"raw": "http://localhost:666/producto/",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "666",
 					"path": [
-						"producto"
+						"producto",
+						""
 					]
 				}
 			},
@@ -87,7 +94,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:666/producto/?id=1",
+					"raw": "http://localhost:666/producto/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -95,52 +102,7 @@
 					"port": "666",
 					"path": [
 						"producto",
-						""
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "1"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "New Request",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "usuario",
-						"value": "pedro",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"usuario\": \"carlos\",\r\n}"
-				},
-				"url": {
-					"raw": "http://localhost:666/usuarios?usuario=franco",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "666",
-					"path": [
-						"usuarios"
-					],
-					"query": [
-						{
-							"key": "usuario",
-							"value": "franco"
-						}
+						"1"
 					]
 				}
 			},
@@ -153,7 +115,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"nombre\": \"nuevo producto\",\r\n  \"cantidad\": 10,\r\n  \"precio\": 29.99\r\n}",
+					"raw": "{\r\n  \"nombre\": \"nuevo pepe\",\r\n  \"cantidad\": 10,\r\n  \"precio\": 29.99,\r\n  \"id\":4\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -161,7 +123,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:666/producto/modificar/4",
+					"raw": "http://localhost:666/producto/modificar/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -170,7 +132,7 @@
 					"path": [
 						"producto",
 						"modificar",
-						"4"
+						"1"
 					]
 				}
 			},
@@ -179,11 +141,62 @@
 		{
 			"name": "CargarPedido",
 			"request": {
+				"auth": {
+					"type": "jwt",
+					"jwt": [
+						{
+							"key": "secret",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "algorithm",
+							"value": "HS256",
+							"type": "string"
+						},
+						{
+							"key": "isSecretBase64Encoded",
+							"value": false,
+							"type": "boolean"
+						},
+						{
+							"key": "payload",
+							"value": "{}",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "headerPrefix",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "queryParamKey",
+							"value": "token",
+							"type": "string"
+						},
+						{
+							"key": "header",
+							"value": "{}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2ODc2Mzc4MDEsImV4cCI6MTY4NzY5NzgwMSwiYXVkIjoiYmQzYzcwNjAxZTk0ODFhOGU1ODFlMmRmYzJjZDcyOTIzNWU0NmMxZSIsImRhdGEiOnsidXN1YXJpbyI6ImpvaG5kb2UiLCJyb2wiOiJhZG1pbiIsImFsaWFzIjoiamVmZSJ9LCJhcHAiOiJUZXN0IEpXVCJ9.lLLmOwDHMRd7fgVFUPz2hQT5XGZ6bSmmN4gP4kJYHdE",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"estado\": \"en preparacion\",\r\n  \"foto\": \"valor_foto\",\r\n  \"codigo\": \"adw1385\",\r\n  \"tiempoDeResolucion\": \"adw1385\",\r\n  \"listaProductos\": [\r\n    {\r\n      \"nombre\": \"cocacola\",\r\n      \"cantidad\": 1,\r\n      \"precio\": 2.5\r\n    },\r\n    {\r\n      \"nombre\": \"milanesa con pure\",\r\n      \"cantidad\": 1,\r\n      \"precio\": 12.99\r\n    }\r\n  ]\r\n}\r\n",
+					"raw": "{\r\n  \"estado\": \"en preparacion\",\r\n  \"foto\": \"valor_foto\",\r\n  \"numeroPedido\": \"adw1385\",\r\n  \"tiempoDeResolucion\": 2,\r\n  \"codigoMesa\": \"wadwdawd\",\r\n  \"listaProductos\": [\r\n    {\r\n      \"nombre\": \"cocacola\"\r\n    },\r\n    {\r\n      \"nombre\": \"milanesa con pure\"\r\n    }\r\n  ]\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -207,9 +220,78 @@
 		},
 		{
 			"name": "PedidoTraerTodos",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:666/pedido/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "666",
+					"path": [
+						"pedido",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CargarMesa",
 			"request": {
 				"method": "GET",
 				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "TraerUnaMesa",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Loggin Usuario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"usuario\": \"johndoe\",\r\n  \"contrasena\": \"mipassword\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:666/usuarios/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "666",
+					"path": [
+						"usuarios",
+						"login"
+					]
+				}
 			},
 			"response": []
 		}
