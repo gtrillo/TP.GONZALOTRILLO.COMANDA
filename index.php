@@ -26,6 +26,7 @@ $app->addErrorMiddleware(true, true, true);
 
 // Add parse body
 $app->addBodyParsingMiddleware();
+session_start();
 
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
@@ -47,7 +48,6 @@ $app->group('/usuarios', function (RouteCollectorProxy $group) {
     });
 });
 
-session_start();
 $app->group('/producto', function (RouteCollectorProxy $group) {
     $group->post('[/]', \ProductoController::class . ':CargarUno');
     $group->get('[/]', \ProductoController::class . ':TraerTodos');
@@ -58,12 +58,14 @@ $app->group('/producto', function (RouteCollectorProxy $group) {
 $app->group('/pedido', function (RouteCollectorProxy $group) {
     $group->get('[/]', \PedidoController::class . ':TraerTodos');
     $group->get('/{codigo}', \PedidoController::class . ':TraerUno');
+    //$group->get('/{codigo}', \PedidoController::class . ':EstadoPedido');
     $group->post('[/]', \PedidoController::class . ':cargarUno');
     $group->put('/modificar/{id}', \PedidoController::class . ':ModificarUno');
 })->add(new VerificarTokenMiddleware());
 
 $app->group('/mesa', function (RouteCollectorProxy $group) {
     $group->post('[/]', \MesaController::class . ':CargarUno');
+    $group->put('/modificarEstado', \MesaController::class . ':ModificarEstado');
     $group->get('[/]', \MesaController::class . ':TraerTodos');
     $group->get('/{codigo}', \MesaController::class . ':TraerUno');
     $group->put('/modificar/{id}', \MesaController::class . ':ModificarUno');

@@ -24,6 +24,7 @@ class Mesa {
 
     public static function obtenerTodos()
     {
+        
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado, foto,codigo, cantidad FROM mesa");
         $consulta->execute();
@@ -42,6 +43,16 @@ class Mesa {
         return $consulta->fetchObject('Mesa');
     }
 
+    public static function obtenerMesaxId($id)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado,codigo, foto FROM mesa WHERE id = :id");
+        $consulta->bindValue(':id', $id, PDO::PARAM_STR);
+        $consulta->execute();
+
+        return $consulta->fetchObject('Mesa');
+    }
+
     public static function modificarMesa()
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
@@ -51,6 +62,35 @@ class Mesa {
         $consulta->bindValue(':foto', $this->clave, PDO::PARAM_STR);
         $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
         $consulta->execute();
+    }
+
+    public static function modificarEstadoMesa($codigo, $estado)
+    {
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        if (self::validarEstado($estado)) {
+            $consulta = $objAccesoDato->prepararConsulta("UPDATE mesa SET estado = :estado WHERE codigo = :codigo");
+            $consulta->bindValue(':codigo', $codigo, PDO::PARAM_STR);
+            $consulta->bindValue(':estado', $estado, PDO::PARAM_STR);
+            $resultado = $consulta->execute();
+    
+            return $resultado; 
+        }
+    
+        return false; 
+    }
+
+
+    private static function validarEstado($nuevoValor)
+    {
+        $retorno = false;
+        $nuevoValor = strtolower($nuevoValor);
+        if($nuevoValor == "con cliente esperando pedido" || $nuevoValor == "con cliente pagando" || $nuevoValor == "cerrada") {
+
+            return true;
+        }
+
+        return $retorno;
+
     }
 
     public static function borrarMesa($codigo)

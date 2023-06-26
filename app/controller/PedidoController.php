@@ -18,6 +18,8 @@ class PedidoController extends Pedido implements IApiUsable
         $codigoMesa = $parametros['codigoMesa'];
         $listaProductosFinal = array();
 
+
+        
         foreach ($listaProductosEntrada as $item) {
             $producto = Producto::obtenerProductoXNombre($item['nombre']);
             if ($producto == null) {
@@ -50,7 +52,8 @@ class PedidoController extends Pedido implements IApiUsable
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
-    
+
+
     public function TraerTodos($request, $response, $args)
     {
         $lista = Pedido::obtenerTodos();
@@ -64,12 +67,12 @@ class PedidoController extends Pedido implements IApiUsable
     {
         $parametros = $request->getParsedBody();
 
-        $nombre = $parametros['nombre'];
-        $precio = $parametros['precio'];
-        $cantidad = $parametros['cantidad'];
         $id = $parametros['id'];
+        $estado = $parametros['estado'];
+        $tiempoDeResolucion = $parametros['tiempoDeResolucion'];
 
-        Producto::modificarProducto($nombre, $precio, $cantidad,$id);
+
+        Pedido::modificarPedidoEnPreparacion($id, $estado, $tiempoDeResolucion);
 
         $payload = json_encode(array("mensaje" => "Producto modificado con éxito"));
 
