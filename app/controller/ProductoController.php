@@ -1,6 +1,7 @@
 <?php
 require_once 'app/models/Producto.php';
 require_once 'app/interfaces/IApiUsable.php';
+use League\Csv\Reader;
 
 class ProductoController extends Producto implements IApiUsable
 {
@@ -28,6 +29,47 @@ class ProductoController extends Producto implements IApiUsable
         return $response
           ->withHeader('Content-Type', 'application/json');
     }
+
+
+    public function CargarCsv($request, $response, $args) {
+        $uploadedFiles = $request->getUploadedFiles();
+        $file = $uploadedFiles['archivo'];
+        if ($file->getError() === UPLOAD_ERR_OK) {
+            $tempFilePath = 'app/importacionesCSV/' . $file->getClientFilename();
+            $file->moveTo($tempFilePath);
+    
+            $csv = \League\Csv\Reader::createFromPath($tempFilePath, 'r');
+            $csv->setDelimiter(',');
+            $csv->setHeaderOffset(0);
+    
+            foreach ($csv->getRecords() as $record) {
+                $nombre = $record['nombre'];
+                $cantidad = $record['cantidad'];
+                $precio = $record['precio'];
+                $sector = $record['sector'];
+    
+                $producto = new Producto();
+                $producto->nombre = $nombre;
+                $producto->cantidad = $cantidad;
+                $producto->precio = $precio;
+                $producto->sector = $sector;
+    
+                $producto->CrearProducto();
+            }
+
+            unlink($tempFilePath);
+
+            $payload = json_encode(array("mensaje" => "archivo cargado con éxito"));
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json');
+        } else {
+            $payload = json_encode(array("mensaje" => "error al cargar el archivo"));
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json');
+        }
+    }
+    
+    
 
     public function TraerUno($request, $response, $args)
     {

@@ -82,6 +82,8 @@ class Producto {
         $consulta->execute();
     }
     
+ 
+
     public function borrarProducto($request, $response, $args)
     {
         $id = $args['id'];

@@ -52,8 +52,6 @@ class MesaController extends Mesa implements IApiUsable
         $codigo = $parametros['codigo'];
         $estado = $parametros['estado'];
 
-    
-
         if(Mesa::modificarEstadoMesa($codigo,$estado)){
           $payload = json_encode(array("mensaje" => "Estado de mesa modificado con exito"));
         }else{

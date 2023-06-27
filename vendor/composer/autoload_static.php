@@ -31,6 +31,7 @@ class ComposerStaticInitf72b1f6779686403a30acea80a0dc4b9
         'cc8e14526dc240491e17a838cb78508c' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/normalize_server.legacy.php',
         '786bf90caabc9e09b6ad4cc5ca8f0e30' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/normalize_uploaded_files.legacy.php',
         '751a5a3f463e4be759be31748b61737c' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/parse_cookie_header.legacy.php',
+        '9e4824c5afbdc1482b6025ce3d4dfde8' => __DIR__ . '/..' . '/league/csv/src/functions_include.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -63,6 +64,7 @@ class ComposerStaticInitf72b1f6779686403a30acea80a0dc4b9
         ),
         'L' => 
         array (
+            'League\\Csv\\' => 11,
             'Laminas\\Diactoros\\' => 18,
         ),
         'I' => 
@@ -162,6 +164,10 @@ class ComposerStaticInitf72b1f6779686403a30acea80a0dc4b9
         'Nyholm\\Psr7Server\\' => 
         array (
             0 => __DIR__ . '/..' . '/nyholm/psr7-server/src',
+        ),
+        'League\\Csv\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/csv/src',
         ),
         'Laminas\\Diactoros\\' => 
         array (

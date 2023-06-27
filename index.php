@@ -50,8 +50,10 @@ $app->group('/usuarios', function (RouteCollectorProxy $group) {
 
 $app->group('/producto', function (RouteCollectorProxy $group) {
     $group->post('[/]', \ProductoController::class . ':CargarUno');
+    $group->post('/cargar-csv', \ProductoController::class . ':CargarCsv');
     $group->get('[/]', \ProductoController::class . ':TraerTodos');
     $group->get('/{id}', \ProductoController::class . ':TraerUno');
+    
     $group->put('/modificar/{id}', \ProductoController::class . ':ModificarUno');
 })->add(new VerificarTokenMiddleware());
 
