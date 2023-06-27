@@ -2,6 +2,7 @@
 require_once 'app/models/Producto.php';
 require_once 'app/interfaces/IApiUsable.php';
 use League\Csv\Reader;
+use League\Csv\Writer;
 
 class ProductoController extends Producto implements IApiUsable
 {
@@ -69,6 +70,35 @@ class ProductoController extends Producto implements IApiUsable
         }
     }
     
+    
+    public function DescargarCsv($request, $response, $args) {
+        $lista = Producto::obtenerTodos();
+
+        $csv = Writer::createFromPath('exportacionescsv', 'w+');
+        $csv->setDelimiter(',');
+        $csv->setNewline("\r\n");
+    
+        $csv->insertOne(['id', 'nombre', 'cantidad', 'precio', 'id_sector', 'deletioDate']);
+
+        foreach ($lista as $producto) {
+            $csv->insertOne([
+                $producto->id,
+                $producto->nombre,
+                $producto->cantidad,
+                $producto->precio,
+                $producto->sector,
+            ]);
+        }
+    
+        $csvContent = $csv->getContent();
+    
+        $response = $response->withHeader('Content-Type', 'text/csv')
+                             ->withHeader('Content-Disposition', 'attachment; filename="archivo.csv"');
+
+        $response->getBody()->write($csvContent);
+    
+        return $response;
+    }
     
 
     public function TraerUno($request, $response, $args)
