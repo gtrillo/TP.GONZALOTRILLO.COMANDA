@@ -40,6 +40,27 @@ class Usuario
         return $retorno;
     }
 
+    public function registrarIngresoUsuario($nombreUsuario) {
+        $fechaIngreso = date('Y-m-d');
+        $horaIngreso = date('H:i:s');
+    
+        $usuarioId = null;
+    
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id from Usuarios where usuario=:nombreUsuario");
+        $consulta->bindValue(':nombreUsuario', $nombreUsuario, PDO::PARAM_STR);
+        $consulta->execute();
+        $usuario = $consulta->fetch(PDO::FETCH_ASSOC);
+        $usuarioId = $usuario['id'];
+    
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO registro_ingreso (usuario_id, fecha_ingreso, hora_ingreso) VALUES (:usuarioId, :fechaIngreso, :horaIngreso)");
+        $consulta->bindValue(':usuarioId', $usuarioId, PDO::PARAM_INT);
+        $consulta->bindValue(':fechaIngreso', $fechaIngreso, PDO::PARAM_STR);
+        $consulta->bindValue(':horaIngreso', $horaIngreso, PDO::PARAM_STR);
+    
+        $consulta->execute();
+    }
+    
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -47,6 +68,17 @@ class Usuario
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Usuario');
+    }
+
+
+    public static function ObtenerIngresos()
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT u.usuario, r.fecha_ingreso,r.hora_ingreso from registro_ingreso r join usuarios u on u.id = r.usuario_id");
+        $consulta->execute();
+        $usuarios = $consulta->fetchAll(PDO::FETCH_ASSOC);
+            
+        return $usuarios;
     }
 
     public static function obtenerUsuario($usuario)

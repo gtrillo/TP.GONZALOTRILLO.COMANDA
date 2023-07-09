@@ -1,31 +1,40 @@
 <?php
-require_once 'app/models/mesa.php';
+require_once 'app/models/encuesta.php';
 require_once 'app/interfaces/IApiUsable.php';
 
-class MesaController extends Mesa implements IApiUsable
+class EncuestaController extends Encuesta //implements IApiUsable
   {
     public function CargarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
-    
-        $estado = $parametros['estado'];
-        $foto = $parametros['foto'];
-        $codigoMesa = $parametros['codigoMesa'];
 
-        $mesa = new Mesa();
-        $mesa->estado = $estado;
-        $mesa->foto = $foto;
-        $mesa->codigoMesa = $codigoMesa;
-        $mesa->CrearMesa();
+        $nombreCliente=$parametros['nombreCliente'];
+        $numeroPedido=$parametros['numeroPedido'];
+        $puntuacionMesa=$parametros['puntuacionMesa'];
+        $puntuacionRestaurante=$parametros['puntuacionRestaurante'];
+        $puntuacionMozo=$parametros['puntuacionMozo'];
+        $puntuacionCocinero=$parametros['puntuacionCocinero'];
+        $textoExperiencia=$parametros['textoExperiencia'];
+
+        $encuesta = new Encuesta();
+        $encuesta->nombreCliente = $nombreCliente;
+        $encuesta->numeroPedido = $numeroPedido;
+        $encuesta->puntuacionMesa = $puntuacionMesa;
+        $encuesta->puntuacionRestaurante = $puntuacionRestaurante;
+        $encuesta->puntuacionMozo = $puntuacionMozo;
+        $encuesta->puntuacionCocinero = $puntuacionCocinero;
+        $encuesta->textoExperiencia = $textoExperiencia;
+
+        $encuesta->crearEncuesta();
     
-        $payload = json_encode(array("mensaje" => "Mesa creada con exito"));
+        $payload = json_encode(array("mensaje" => "Encuesta enviada con exito, muchas gracias!"));
     
         $response->getBody()->write($payload);
         return $response
             ->withHeader('Content-Type', 'application/json');
     }
 
-
+    /*
 
   
     public function TraerUno($request, $response, $args)
@@ -37,18 +46,6 @@ class MesaController extends Mesa implements IApiUsable
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
-    public function TraerMasUsada($request, $response, $args)
-    {
-        $mesa = Mesa::obtenerMasUsada();
-        $payload = json_encode($mesa);
-    
-        $payloadWithText = "Mesa mas usada\n" . $payload;
-    
-        $response->getBody()->write($payloadWithText);
-        return $response->withHeader('Content-Type', 'application/json');
-    }
-    
-
 
     public function TraerTodos($request, $response, $args)
     {
@@ -60,26 +57,6 @@ class MesaController extends Mesa implements IApiUsable
           ->withHeader('Content-Type', 'application/json');
     }
 
-    public function ModificarEstado($request, $response, $args)
-    {
-        $parametros = $request->getParsedBody();
-
-        $codigo = $parametros['codigo'];
-        $estado = $parametros['estado'];
-
-        if(Mesa::modificarEstadoMesa($codigo,$estado)){
-          $payload = json_encode(array("mensaje" => "Estado de mesa modificado con exito"));
-        }else{
-          $payload = json_encode(array("mensaje" => "Error al modificar la mesa"));
-        }
-        
-
-        $response->getBody()->write($payload);
-        
-        return $response->withHeader('Content-Type', 'application/json');
-    }
-
-    
     public function ModificarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
@@ -111,5 +88,6 @@ class MesaController extends Mesa implements IApiUsable
           ->withHeader('Content-Type', 'application/json');
     }
 
-   
+   */
 }
+?>

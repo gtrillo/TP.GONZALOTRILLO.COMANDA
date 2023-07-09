@@ -46,6 +46,19 @@ class UsuarioController extends Usuario implements IApiUsable
           ->withHeader('Content-Type', 'application/json');
     }
 
+    
+    public function TraerIngresosAlSistema($request, $response, $args)
+    {
+        $lista = Usuario::ObtenerIngresos();
+
+        $payload = json_encode(array("lista de ingresos al sistema" => $lista));
+
+        $response->getBody()->write($payload);
+        return $response
+          ->withHeader('Content-Type', 'application/json');
+    }
+
+
     public function Login($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
@@ -63,6 +76,7 @@ class UsuarioController extends Usuario implements IApiUsable
 
             echo( $_SESSION['usuario']);
 
+            Usuario::registrarIngresoUsuario($usuario);
 
             $payload = json_encode(array('jwt' => $token));
             $response->getBody()->write($payload);
@@ -74,7 +88,8 @@ class UsuarioController extends Usuario implements IApiUsable
             return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
         }
     }
-    
+
+
     public function ModificarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();

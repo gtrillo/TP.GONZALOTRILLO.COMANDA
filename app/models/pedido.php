@@ -47,7 +47,7 @@ class Pedido {
         }
     }
     
-    public function CobrarCuenta($codigoMesa, $numeroPedido)
+    public static function CobrarCuenta($codigoMesa, $numeroPedido)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta("SELECT p.total, m.codigoMesa FROM pedido p JOIN mesa m ON p.mesa_id = m.id WHERE p.codigo = :numeroPedido AND m.codigoMesa = :codigoMesa");

@@ -51,8 +51,8 @@ class PedidoController extends Pedido implements IApiUsable
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
-    
-    public function CobrarCuenta($request, $response, $args)
+
+    public function Cobrar($request, $response, $args)
     {
         $parametros = $request->getQueryParams();
     

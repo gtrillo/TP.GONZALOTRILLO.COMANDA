@@ -82,7 +82,21 @@ class Producto {
         $consulta->execute();
     }
     
- 
+        public function obtenerProductosMasVendidos() {
+            $objAccesoDatos = AccesoDatos::obtenerInstancia();
+    
+            $consulta = $objAccesoDatos->prepararConsulta("SELECT p.id, p.nombre, COUNT(*) as cantidad_vendida
+                FROM detalle_pedido AS dp
+                JOIN producto AS p ON dp.producto_id = p.id
+                GROUP BY dp.producto_id
+                ORDER BY cantidad_vendida DESC
+            ");
+    
+            $consulta->execute();
+            $productos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+            
+            return $productos;
+        }
 
     public function borrarProducto($request, $response, $args)
     {

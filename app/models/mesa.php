@@ -67,17 +67,28 @@ class Mesa {
     public static function modificarEstadoMesa($codigo, $estado)
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
-        if (self::validarEstado($estado)) {
+        $usuario = Usuario::obtenerUsuario($_SESSION['usuario']);
+    
+        // Verificar si el usuario tiene el rol de administrador
+        if ($usuario->getRol() === 'administrador' && $estado === 'cerrada') {
             $consulta = $objAccesoDato->prepararConsulta("UPDATE mesa SET estado = :estado WHERE codigo = :codigo");
             $consulta->bindValue(':codigo', $codigo, PDO::PARAM_STR);
             $consulta->bindValue(':estado', $estado, PDO::PARAM_STR);
             $resultado = $consulta->execute();
     
-            return $resultado; 
+            return $resultado;
+        } elseif ($estado !== 'cerrada') {
+            $consulta = $objAccesoDato->prepararConsulta("UPDATE mesa SET estado = :estado WHERE codigo = :codigo");
+            $consulta->bindValue(':codigo', $codigo, PDO::PARAM_STR);
+            $consulta->bindValue(':estado', $estado, PDO::PARAM_STR);
+            $resultado = $consulta->execute();
+    
+            return $resultado;
         }
     
-        return false; 
+        return false;
     }
+    
 
 
     private static function validarEstado($nuevoValor)
@@ -85,12 +96,20 @@ class Mesa {
         $retorno = false;
         $nuevoValor = strtolower($nuevoValor);
         if($nuevoValor == "con cliente esperando pedido" || $nuevoValor == "con cliente pagando" || $nuevoValor == "cerrada") {
-
             return true;
         }
 
         return $retorno;
 
+    }
+
+    public static function obtenerMasUsada()
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado, foto,codigoMesa, COUNT(*) AS usos FROM mesa GROUP BY codigoMesa ORDER BY usos DESC LIMIT 1");
+        $consulta->execute();
+    
+        return $consulta->fetchObject('Mesa');
     }
 
     public static function borrarMesa($codigo)

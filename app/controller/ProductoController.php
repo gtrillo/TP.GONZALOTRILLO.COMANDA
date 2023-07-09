@@ -100,6 +100,14 @@ class ProductoController extends Producto implements IApiUsable
         return $response;
     }
     
+    public function RankingVentas($request, $response, $args){
+
+        $productos = Producto::obtenerProductosMasVendidos();
+        $payload = json_encode($productos);
+    
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+    }
 
     public function TraerUno($request, $response, $args)
     {
