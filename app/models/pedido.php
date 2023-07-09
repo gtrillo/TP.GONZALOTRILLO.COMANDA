@@ -13,20 +13,20 @@ class Pedido {
 
     public function CrearPedido()
     {
-        $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $mesa = Mesa::obtenerMesa($this->codigoMesa);
-        $this->total = 0;
-        if ($mesa != null) {
-            $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO pedido (id, codigo, estado, tiempoDeResolucion, mesa_id, total) VALUES (:id, :codigo, :estado, :tiempoDeResolucion, :mesa_id, :total)");
-            $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
-            $consulta->bindValue(':codigo', $this->codigoPedido, PDO::PARAM_STR);
-            $consulta->bindValue(':mesa_id', $mesa->id, PDO::PARAM_STR);
-            $consulta->bindValue(':estado', $this->estado, PDO::PARAM_STR);
-            $consulta->bindValue(':total', $this->total, PDO::PARAM_INT);
-            $consulta->bindValue(':tiempoDeResolucion', $this->tiempoDeResolucion, PDO::PARAM_STR);
-    
-            $consulta->execute();
-            $pedidoId = $objAccesoDatos->obtenerUltimoId();
+            $objAccesoDatos = AccesoDatos::obtenerInstancia();
+            $mesa = Mesa::obtenerMesa($this->codigoMesa);
+            $this->total = 0;
+            if ($mesa != null) {
+                $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO pedido (id, codigo, estado, tiempoDeResolucion, mesa_id, total) VALUES (:id, :codigo, :estado, :tiempoDeResolucion, :mesa_id, :total)");
+                $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
+                $consulta->bindValue(':codigo', $this->codigoPedido, PDO::PARAM_STR);
+                $consulta->bindValue(':mesa_id', $mesa->id, PDO::PARAM_STR);
+                $consulta->bindValue(':estado', $this->estado, PDO::PARAM_STR);
+                $consulta->bindValue(':total', $this->total, PDO::PARAM_INT);
+                $consulta->bindValue(':tiempoDeResolucion', $this->tiempoDeResolucion, PDO::PARAM_STR);
+        
+                $consulta->execute();
+                $pedidoId = $objAccesoDatos->obtenerUltimoId();
     
             foreach ($this->listaProductos as $producto) {
                 $this->total += $producto->precio;
@@ -47,8 +47,20 @@ class Pedido {
         }
     }
     
-
-
+    public function CobrarCuenta($codigoMesa, $numeroPedido)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT p.total, m.codigoMesa FROM pedido p JOIN mesa m ON p.mesa_id = m.id WHERE p.codigo = :numeroPedido AND m.codigoMesa = :codigoMesa");
+        $consulta->bindValue(':numeroPedido', $numeroPedido, PDO::PARAM_STR);
+        $consulta->bindValue(':codigoMesa', $codigoMesa, PDO::PARAM_STR);
+        $consulta->execute();
+    
+        $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    
+        return $resultados;
+    }
+    
+    
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -89,7 +101,41 @@ class Pedido {
     
         return array_values($pedidos);
     }
-    
+
+
+
+public static function ObternerPedidosListos()
+{
+    $objAccesoDatos = AccesoDatos::obtenerInstancia();
+    $consulta = $objAccesoDatos->prepararConsulta("SELECT p.id, p.codigo, p.estado, p.tiempoDeResolucion,p.total,p.mesa_id, dp.producto_id, pr.precio,pr.cantidad, pr.nombre, pr.sector_id FROM pedido p LEFT JOIN detalle_pedido dp ON p.id = dp.pedido_id LEFT JOIN producto pr ON dp.producto_id = pr.id where p.estado='listo para servir'");
+    $consulta->execute();
+
+    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+    $pedidos = [];
+    foreach ($resultados as $fila) {
+        $pedido = new Pedido();
+        $pedido->id = $fila['id'];
+        $pedido->codigo = $fila['codigo'];
+        $pedido->estado = $fila['estado'];
+        $pedido->tiempoDeResolucion = $fila['tiempoDeResolucion'];
+        $pedido->total = $fila['total'];
+        $pedido->mesa_id = $fila['mesa_id'];
+
+        $producto = new Producto();
+        $producto->id = $fila['producto_id'];
+        $producto->nombre = $fila['nombre'];
+        $producto->precio = $fila['precio'];
+        $producto->cantidad = $fila['cantidad'];
+
+        $pedido->listaProductos[] = $producto;
+
+        $pedidos[] = $pedido;
+    }
+
+    return $pedidos;
+}
+
     private static function inicializarPedido($fila)
     {
         $pedido = new Pedido();
@@ -202,7 +248,7 @@ class Pedido {
         $retorno = false;
 
         $nuevoValor = strtolower($nuevoValor);
-        if($nuevoValor == "con cliente esperando pedido" || $nuevoValor == "con cliente esperando pedido" || $nuevoValor == "con cliente pagando" || $nuevoValor == "cerrada") {
+        if($nuevoValor == "a preparar" || $nuevoValor == "en preparacion" || $nuevoValor == "listo para servir") {
             return true;
         }
 

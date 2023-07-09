@@ -63,6 +63,7 @@ class UsuarioController extends Usuario implements IApiUsable
 
             echo( $_SESSION['usuario']);
 
+
             $payload = json_encode(array('jwt' => $token));
             $response->getBody()->write($payload);
             return $response->withHeader('Content-Type', 'application/json');

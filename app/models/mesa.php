@@ -26,7 +26,7 @@ class Mesa {
     {
         
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado, foto,codigo, cantidad FROM mesa");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado, foto,codigoMesa FROM mesa");
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Mesa');

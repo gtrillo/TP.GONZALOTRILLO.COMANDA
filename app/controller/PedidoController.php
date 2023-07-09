@@ -18,8 +18,6 @@ class PedidoController extends Pedido implements IApiUsable
         $codigoMesa = $parametros['codigoMesa'];
         $listaProductosFinal = array();
 
-
-        
         foreach ($listaProductosEntrada as $item) {
             $producto = Producto::obtenerProductoXNombre($item['nombre']);
             if ($producto == null) {
@@ -46,18 +44,44 @@ class PedidoController extends Pedido implements IApiUsable
 
     public function TraerUno($request, $response, $args)
     {
-        $codigoPedido = $args['codigoPedido'];
+        $queryParams = $request->getQueryParams();
+        $codigoPedido = $queryParams['codigoPedido'];
         $pedido = Pedido::obtenerPedido($codigoPedido);
         $payload = json_encode($pedido);
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
-
+    
+    public function CobrarCuenta($request, $response, $args)
+    {
+        $parametros = $request->getQueryParams();
+    
+        $numeroPedido = $parametros['numeroPedido'];
+        $codigoMesa = $parametros['codigoMesa'];
+    
+        $cuenta = Pedido::CobrarCuenta($codigoMesa, $numeroPedido);
+        $payload = json_encode(array("cuenta" => $cuenta));
+    
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+    
 
     public function TraerTodos($request, $response, $args)
     {
         $lista = Pedido::obtenerTodos();
-        $payload = json_encode(array("listaProducto" => $lista));
+        $payload = json_encode(array("listaPedidos" => $lista));
+    
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+   
+    
+    public function TraerPedidosListos($request, $response, $args)
+    {
+        $lista = Pedido::ObternerPedidosListos();
+        $payload = json_encode(array("listaPedidos" => $lista));
     
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
@@ -74,7 +98,7 @@ class PedidoController extends Pedido implements IApiUsable
 
         Pedido::modificarPedidoEnPreparacion($id, $estado, $tiempoDeResolucion);
 
-        $payload = json_encode(array("mensaje" => "Producto modificado con éxito"));
+        $payload = json_encode(array("mensaje" => "Pedido modificado con éxito"));
 
         $response->getBody()->write($payload);
         return $response

@@ -78,7 +78,7 @@ class ProductoController extends Producto implements IApiUsable
         $csv->setDelimiter(',');
         $csv->setNewline("\r\n");
     
-        $csv->insertOne(['id', 'nombre', 'cantidad', 'precio', 'id_sector', 'deletioDate']);
+        $csv->insertOne(['id', 'nombre', 'cantidad', 'precio']);
 
         foreach ($lista as $producto) {
             $csv->insertOne([

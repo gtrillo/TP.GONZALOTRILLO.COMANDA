@@ -30,6 +30,8 @@ class Usuario
         $consulta->execute();
     
         $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+        
+        //$_SESSION['id_usuario'] = $resultado['id'];
 
         if (password_verify($contrasena, $resultado['clave'])) {
               $retorno = true;

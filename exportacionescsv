@@ -1,4 +1,4 @@
-id,nombre,cantidad,precio,id_sector,deletioDate
+id,nombre,cantidad,precio
 1,"nuevo producto",10,29.99,
 2,prueba1,3,1232,
 3,prueba13,3,1232,

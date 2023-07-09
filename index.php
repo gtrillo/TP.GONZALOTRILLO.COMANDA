@@ -29,6 +29,7 @@ $app->addBodyParsingMiddleware();
 session_start();
 
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
+    
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->post('/login', \UsuarioController::class . ':Login');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
@@ -60,8 +61,9 @@ $app->group('/producto', function (RouteCollectorProxy $group) {
 
 $app->group('/pedido', function (RouteCollectorProxy $group) {
     $group->get('[/]', \PedidoController::class . ':TraerTodos');
-    $group->get('/{codigo}', \PedidoController::class . ':TraerUno');
-    //$group->get('/{codigo}', \PedidoController::class . ':EstadoPedido');
+    $group->get('/estadoPedido', \PedidoController::class . ':TraerUno');
+    $group->get('/cobrarCuenta/{numeroPedido}/{codigoMesa}', \PedidoController::class . ':CobrarCuenta');
+    $group->get('/pedidosListos', \PedidoController::class . ':TraerPedidosListos');
     $group->post('[/]', \PedidoController::class . ':cargarUno');
     $group->put('/modificar/{id}', \PedidoController::class . ':ModificarUno');
 })->add(new VerificarTokenMiddleware());
