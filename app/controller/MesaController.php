@@ -69,25 +69,51 @@ class MesaController extends Mesa implements IApiUsable
           ->withHeader('Content-Type', 'application/json');
     }
 
+    public function FacturacionDeUnaMesa($request, $response, $args)
+    {
+        $parametros = $request->getQueryParams();
+        $codigoMesa = $parametros['codigoMesa'];
+        $fechaInicio = $parametros['fechaInicio'];
+        $fechaFinalizacion = $parametros['fechaFinalizacion'];
+    
+        $facturacion = Mesa::ObtenerFacturacionEntreFechas($codigoMesa, $fechaInicio, $fechaFinalizacion);
+    
+        $payload = json_encode(array("facturacion" => $facturacion));
+    
+        $response->getBody()->write($payload);
+        return $response
+            ->withHeader('Content-Type', 'application/json');
+    }
+    
+
+
     public function ModificarEstado($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
-
+    
         $codigo = $parametros['codigo'];
         $estado = $parametros['estado'];
-
-        if(Mesa::modificarEstadoMesa($codigo,$estado)){
-          $payload = json_encode(array("mensaje" => "Estado de mesa modificado con exito"));
-        }else{
-          $payload = json_encode(array("mensaje" => "Error al modificar la mesa"));
+    
+        if (Mesa::modificarEstadoMesa($codigo, $estado)) {
+            $payload = json_encode(array("mensaje" => "Estado de mesa modificado con éxito"));
+        } else {
+            $payload = json_encode(array("mensaje" => "Error al modificar la mesa"));
         }
-        
-
+          
         $response->getBody()->write($payload);
-        
+    
+        $fotoMesa = $request->getUploadedFiles()['foto_mesa'];
+    
+        if ($fotoMesa && $fotoMesa->getError() === UPLOAD_ERR_OK) {
+            $nombreArchivo = uniqid('mesa_') . '.' . $fotoMesa->getClientFilename();
+    
+            $fotoMesa->moveTo('app/imagenes/mesa/' . $nombreArchivo);
+        }
+    
         return $response->withHeader('Content-Type', 'application/json');
     }
-
+    
+    
     
     public function ModificarUno($request, $response, $args)
     {

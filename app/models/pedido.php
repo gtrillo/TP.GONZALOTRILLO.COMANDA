@@ -76,6 +76,9 @@ class Pedido {
             $pedido = self::inicializarPedido($fila);
     
             switch ($usuario->rol) {
+                case "administrador":
+                    $pedidos[] = $pedido; // Agregar todos los pedidos sin restricciones
+                    break;
                 case "cocinero":
                     if ($fila['sector_id'] == 3 && $fila['estado'] == "a preparar") {
                         $pedidos[] = $pedido;
@@ -92,11 +95,10 @@ class Pedido {
                     }
                     break;
                 case "cervecero":
-                if ($fila['sector_id'] == 2 && $fila['estado'] == "a preparar") {
-                    $pedidos[] = $pedido;
-                }
-                break;
-                
+                    if ($fila['sector_id'] == 2 && $fila['estado'] == "a preparar") {
+                        $pedidos[] = $pedido;
+                    }
+                    break;
             }
         }
     

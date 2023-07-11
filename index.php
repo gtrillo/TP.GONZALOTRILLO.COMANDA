@@ -72,9 +72,10 @@ $app->group('/pedido', function (RouteCollectorProxy $group) {
 })->add(new VerificarTokenMiddleware());
 
 $app->group('/mesa', function (RouteCollectorProxy $group) {
-    $group->post('[/]', \MesaController::class . ':CargarUno');
-    $group->put('/modificarEstado', \MesaController::class . ':ModificarEstado');
-    $group->get('[/]', \MesaController::class . ':TraerTodos');
+    $group->post('/', \MesaController::class . ':CargarUno');
+    $group->post('/modificarEstado', \MesaController::class . ':ModificarEstado');
+ //   $group->get('/', \MesaController::class . ':TraerTodos');
+    $group->get('/', \MesaController::class . ':FacturacionDeUnaMesa');
     $group->get('/mesaMasUsada', \MesaController::class . ':TraerMasUsada');
     $group->get('/{codigo}', \MesaController::class . ':TraerUno');
     $group->get('/reportes/rakingMesa', \MesaController::class . ':RankingFacturacionMesas');

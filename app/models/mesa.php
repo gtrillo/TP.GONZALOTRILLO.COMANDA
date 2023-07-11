@@ -112,13 +112,31 @@ class Mesa {
     {
         $retorno = false;
         $nuevoValor = strtolower($nuevoValor);
-        if($nuevoValor == "con cliente esperando pedido" || $nuevoValor == "con cliente pagando" || $nuevoValor == "cerrada") {
+        if($nuevoValor == "con cliente comiendo" ||  $nuevoValor ==" con cliente esperando pedido" || $nuevoValor == "con cliente pagando" || $nuevoValor == "cerrada") {
             return true;
         }
 
         return $retorno;
 
     }
+
+    public static function ObtenerFacturacionEntreFechas($codigoMesa, $fechaInicio, $fechaFinalizacion)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT SUM(p.total) AS total_facturacion FROM pedido p 
+        JOIN mesa m ON p.mesa_id = m.id 
+        WHERE m.codigoMesa = :codigoMesa 
+        AND m.fecha BETWEEN :fechaInicio AND :fechaFinalizacion");
+        $consulta->bindValue(':codigoMesa', $codigoMesa, PDO::PARAM_STR);
+        $consulta->bindValue(':fechaInicio', $fechaInicio, PDO::PARAM_STR);
+        $consulta->bindValue(':fechaFinalizacion', $fechaFinalizacion, PDO::PARAM_STR);
+        $consulta->execute();
+    
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+    
+        return $resultado['total_facturacion'];
+    }
+    
 
     public static function obtenerMasUsada()
     {
