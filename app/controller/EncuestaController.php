@@ -34,9 +34,21 @@ class EncuestaController extends Encuesta //implements IApiUsable
             ->withHeader('Content-Type', 'application/json');
     }
 
-    /*
-
+    public function ConsultarEncuestas($request, $response, $next)
+    {
+        $mejoresEncuestas = Encuesta::obtenerMejoresEncuestas(5);
+    
+        $payload = json_encode($mejoresEncuestas);
+    
+        $response->getBody()->write($payload);
+        $payload = json_encode(array("mensaje" => "Encuesta enviada con exito, muchas gracias!"));
+    
+        return $response
+            ->withHeader('Content-Type', 'application/json');
+    }
+    
   
+    /*
     public function TraerUno($request, $response, $args)
     {
         $codigo = $args['codigo'];

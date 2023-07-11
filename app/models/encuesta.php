@@ -47,5 +47,16 @@ class Encuesta {
         $consulta->execute();
         return $consulta->fetchObject('Encuesta');
     }
+    public static function obtenerMejoresEncuestas($cantidad)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM encuesta ORDER BY puntuacionMesa DESC, puntuacionRestaurante DESC, puntuacionMozo DESC, puntuacionCocinero DESC LIMIT :cantidad");
+        $consulta->bindValue(':cantidad', $cantidad, PDO::PARAM_INT);
+        $consulta->execute();
+
+        $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+        return $resultados;
+    }
 }
 ?>

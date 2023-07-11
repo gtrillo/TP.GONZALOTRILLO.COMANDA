@@ -50,12 +50,10 @@ class UsuarioController extends Usuario implements IApiUsable
     public function TraerIngresosAlSistema($request, $response, $args)
     {
         $lista = Usuario::ObtenerIngresos();
-
         $payload = json_encode(array("lista de ingresos al sistema" => $lista));
 
         $response->getBody()->write($payload);
-        return $response
-          ->withHeader('Content-Type', 'application/json');
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
 

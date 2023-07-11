@@ -20,6 +20,22 @@ class Usuario
         return $objAccesoDatos->obtenerUltimoId();
     }
 
+    public function getRol($usuario)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT rol FROM usuarios WHERE usuario = :usuario");
+        $consulta->bindValue(':usuario', $usuario, PDO::PARAM_STR);
+        $consulta->execute();
+
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+
+        if ($resultado) {
+            return $resultado['rol'];
+        } else {
+            return null; // o un valor por defecto para indicar que no se encontró el usuario
+        }
+    }
+
     public static function verificarCredenciales($usuario, $contrasena)
     {
         $retorno = false;

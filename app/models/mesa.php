@@ -6,27 +6,29 @@ class Mesa {
     public $estado;
     public $foto;
     public $codigoMesa;
+    public $fecha;
 
     public function CrearMesa()
     {
-            $objAccesoDatos = AccesoDatos::obtenerInstancia();
-            $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO mesa (id,codigo ,estado, foto) VALUES (:id,:codigo,:estado,:foto)");
-            $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
-            $consulta->bindValue(':foto', $this->foto, PDO::PARAM_STR);
-            $consulta->bindValue(':estado', $this->estado, PDO::PARAM_STR);
-            $consulta->bindValue(':codigo', $this->codigoMesa, PDO::PARAM_STR);
-            $consulta->execute();
-        
-
+        $fecha = new DateTime(date("d-m-Y"));
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO mesa (id, codigoMesa, estado, foto, fecha) VALUES (:id, :codigoMesa, :estado, :foto, :fecha)");
+        $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $consulta->bindValue(':fecha', $this->fecha, PDO::PARAM_STR);
+        $consulta->bindValue(':foto', $this->foto, PDO::PARAM_STR);
+        $consulta->bindValue(':estado', $this->estado, PDO::PARAM_STR);
+        $consulta->bindValue(':codigoMesa', $this->codigoMesa, PDO::PARAM_STR);
+        $consulta->execute();
+    
         return $objAccesoDatos->obtenerUltimoId();
     }
-
+    
 
     public static function obtenerTodos()
     {
         
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado, foto,codigoMesa FROM mesa");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado, foto,codigoMesa,fecha FROM mesa");
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Mesa');
@@ -36,7 +38,7 @@ class Mesa {
     public static function obtenerMesa($codigoMesa)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado,codigo, foto FROM mesa WHERE codigo = :codigo");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado,codigoMesa, foto,fecha FROM mesa WHERE codigoMesa = :codigo");
         $consulta->bindValue(':codigo', $codigoMesa, PDO::PARAM_STR);
         $consulta->execute();
 
@@ -46,7 +48,7 @@ class Mesa {
     public static function obtenerMesaxId($id)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado,codigo, foto FROM mesa WHERE id = :id");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado,codigoMesa, foto,fecha FROM mesa WHERE id = :id");
         $consulta->bindValue(':id', $id, PDO::PARAM_STR);
         $consulta->execute();
 
@@ -56,29 +58,46 @@ class Mesa {
     public static function modificarMesa()
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDato->prepararConsulta("UPDATE mesa SET codigo = :codigo, estado = :estado, foto = :foto WHERE id = :id");
-        $consulta->bindValue(':codigo', $this->usuario, PDO::PARAM_STR);
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE mesa SET codigoMesa = :codigocodigoMesa, estado = :estado, foto = :foto, fecha=:fechaWHERE id = :id");
+        $consulta->bindValue(':codigoMesa', $this->codigoMesa, PDO::PARAM_STR);
+        $consulta->bindValue(':fecha', $this->fecha, PDO::PARAM_STR);
         $consulta->bindValue(':estado', $this->clave, PDO::PARAM_STR);
         $consulta->bindValue(':foto', $this->clave, PDO::PARAM_STR);
         $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
         $consulta->execute();
     }
 
+    public static function FacturacionMesas()
+    {
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta("
+            SELECT m.id AS mesa_id, COALESCE(SUM(p.total), 0) AS total_facturado
+            FROM mesa m
+            LEFT JOIN pedido p ON m.id = p.mesa_id
+            GROUP BY m.id
+            ORDER BY total_facturado DESC
+        ");
+        $consulta->execute();
+        $mesas = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        return $mesas;
+    }
+    
+    
     public static function modificarEstadoMesa($codigo, $estado)
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
         $usuario = Usuario::obtenerUsuario($_SESSION['usuario']);
     
         // Verificar si el usuario tiene el rol de administrador
-        if ($usuario->getRol() === 'administrador' && $estado === 'cerrada') {
-            $consulta = $objAccesoDato->prepararConsulta("UPDATE mesa SET estado = :estado WHERE codigo = :codigo");
+        if ($usuario->getRol($_SESSION['usuario']) === 'administrador' && $estado === 'cerrada') {
+            $consulta = $objAccesoDato->prepararConsulta("UPDATE mesa SET estado = :estado WHERE codigoMesa = :codigo");
             $consulta->bindValue(':codigo', $codigo, PDO::PARAM_STR);
             $consulta->bindValue(':estado', $estado, PDO::PARAM_STR);
             $resultado = $consulta->execute();
     
             return $resultado;
         } elseif ($estado !== 'cerrada') {
-            $consulta = $objAccesoDato->prepararConsulta("UPDATE mesa SET estado = :estado WHERE codigo = :codigo");
+            $consulta = $objAccesoDato->prepararConsulta("UPDATE mesa SET estado = :estado WHERE codigoMesa = :codigo");
             $consulta->bindValue(':codigo', $codigo, PDO::PARAM_STR);
             $consulta->bindValue(':estado', $estado, PDO::PARAM_STR);
             $resultado = $consulta->execute();
@@ -89,8 +108,6 @@ class Mesa {
         return false;
     }
     
-
-
     private static function validarEstado($nuevoValor)
     {
         $retorno = false;
@@ -106,7 +123,7 @@ class Mesa {
     public static function obtenerMasUsada()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado, foto,codigoMesa, COUNT(*) AS usos FROM mesa GROUP BY codigoMesa ORDER BY usos DESC LIMIT 1");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, estado, foto,codigoMesa,fecha, COUNT(*) AS usos FROM mesa GROUP BY codigoMesa ORDER BY usos DESC LIMIT 1");
         $consulta->execute();
     
         return $consulta->fetchObject('Mesa');

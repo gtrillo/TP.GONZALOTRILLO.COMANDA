@@ -11,10 +11,12 @@ class MesaController extends Mesa implements IApiUsable
         $estado = $parametros['estado'];
         $foto = $parametros['foto'];
         $codigoMesa = $parametros['codigoMesa'];
-
+        $fecha= $parametros['fecha'];
+        
         $mesa = new Mesa();
         $mesa->estado = $estado;
         $mesa->foto = $foto;
+        $mesa->fecha = $fecha;
         $mesa->codigoMesa = $codigoMesa;
         $mesa->CrearMesa();
     
@@ -26,7 +28,14 @@ class MesaController extends Mesa implements IApiUsable
     }
 
 
+    public function RankingFacturacionMesas($request, $response, $args)
+    {
+        $lista = Mesa::FacturacionMesas();
+        $payload = json_encode(array("listaMesa" => $lista));
 
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+    }
   
     public function TraerUno($request, $response, $args)
     {

@@ -32,9 +32,9 @@ session_start();
 
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
     
+    $group->get('[/]', \UsuarioController::class . ':TraerIngresosAlSistema');
     $group->post('/login', \UsuarioController::class . ':Login');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
-    $group->get('[/]', \UsuarioController::class . ':ObtenerIngresos');
     $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(function (Request $request, RequestHandler $handler) {
         $parametros = $request->getParsedBody();
         $usuario = $parametros['usuario'];
@@ -77,11 +77,13 @@ $app->group('/mesa', function (RouteCollectorProxy $group) {
     $group->get('[/]', \MesaController::class . ':TraerTodos');
     $group->get('/mesaMasUsada', \MesaController::class . ':TraerMasUsada');
     $group->get('/{codigo}', \MesaController::class . ':TraerUno');
+    $group->get('/reportes/rakingMesa', \MesaController::class . ':RankingFacturacionMesas');
     $group->put('/modificar/{id}', \MesaController::class . ':ModificarUno');
 })->add(new VerificarTokenMiddleware());
 
 $app->group('/encuesta', function (RouteCollectorProxy $group) {
     $group->post('[/]', \EncuestaController::class . ':CargarUno');
+    $group->get('[/]', \EncuestaController::class . ':ConsultarEncuestas');
 })->add(new VerificarTokenMiddleware());
 
 

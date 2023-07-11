@@ -26,7 +26,7 @@ class PedidoController extends Pedido implements IApiUsable
                 $listaProductosFinal[] = $producto;
             }
         }
-        
+
         $pedido = new Pedido();
         $pedido->estado = $estado;
         $pedido->foto = $foto;
