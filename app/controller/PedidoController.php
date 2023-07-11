@@ -76,8 +76,16 @@ class PedidoController extends Pedido implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }
 
-   
+    public function TraerResueltosATiempo($request, $response, $args)
+    {
+        $lista = Pedido::obtenerPedidosResueltosATiempo();
+        $payload = json_encode(array("listaPedidos" => $lista));
     
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+    
+
     public function TraerPedidosListos($request, $response, $args)
     {
         $lista = Pedido::ObternerPedidosListos();

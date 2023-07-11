@@ -92,9 +92,12 @@ class MesaController extends Mesa implements IApiUsable
         $parametros = $request->getParsedBody();
     
         $codigo = $parametros['codigo'];
+        $numero_pedido = $parametros['numero_pedido'];
         $estado = $parametros['estado'];
-    
+        $tiempo_finalizacion = $parametros['tiempo_finalizacion'];
+
         if (Mesa::modificarEstadoMesa($codigo, $estado)) {
+          Pedido::actualizarHorarioDeFinalizacion($numero_pedido, $tiempo_finalizacion);
             $payload = json_encode(array("mensaje" => "Estado de mesa modificado con éxito"));
         } else {
             $payload = json_encode(array("mensaje" => "Error al modificar la mesa"));

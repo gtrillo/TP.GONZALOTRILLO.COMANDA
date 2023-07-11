@@ -66,17 +66,18 @@ $app->group('/pedido', function (RouteCollectorProxy $group) {
     $group->get('[/]', \PedidoController::class . ':TraerTodos');
     $group->get('/estadoPedido', \PedidoController::class . ':TraerUno');
     $group->get('/cobrarCuenta', \PedidoController::class . ':Cobrar');
+    $group->get('/resultoEnTiempo', \PedidoController::class . ':TraerResueltosATiempo');
     $group->get('/pedidosListos', \PedidoController::class . ':TraerPedidosListos');
-    $group->post('[/]', \PedidoController::class . ':cargarUno');
+    $group->post('/cargar', \PedidoController::class . ':CargarUno');
     $group->put('/modificar/{id}', \PedidoController::class . ':ModificarUno');
 })->add(new VerificarTokenMiddleware());
 
 $app->group('/mesa', function (RouteCollectorProxy $group) {
-    $group->post('/', \MesaController::class . ':CargarUno');
-    $group->post('/modificarEstado', \MesaController::class . ':ModificarEstado');
- //   $group->get('/', \MesaController::class . ':TraerTodos');
-    $group->get('/', \MesaController::class . ':FacturacionDeUnaMesa');
+    $group->post('[/]', \MesaController::class . ':CargarUno');
+    $group->put('/modificarEstado', \MesaController::class . ':ModificarEstado');
+    $group->get('[/]', \MesaController::class . ':TraerTodos');
     $group->get('/mesaMasUsada', \MesaController::class . ':TraerMasUsada');
+    $group->get('/facturacionMesa', \MesaController::class . ':TraerMasUsada');
     $group->get('/{codigo}', \MesaController::class . ':TraerUno');
     $group->get('/reportes/rakingMesa', \MesaController::class . ':RankingFacturacionMesas');
     $group->put('/modificar/{id}', \MesaController::class . ':ModificarUno');
